@@ -48,11 +48,12 @@ def main():
     plt.plot_car(atk)
 
     res = quintic_polynomials_planner(
-        src=dataset[0].atk, sv=5, sa=0.1,
+        src=dataset[0].npc, sv=5, sa=0.1,
         dst=atk, gv=10, ga=-1,
-        total_time=elapse_time, dt=0.5)
+        frame=len(dataset), dt=0.5)
     # print(res)
-    plt.show_animation(dataset, res)
+    dataset.set_atk(res)
+    plt.plot_data(dataset, atk=True)
 
     plt.show()
 

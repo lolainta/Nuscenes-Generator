@@ -9,6 +9,10 @@ class Rotation():
             self.yaw = args[0]
         elif isinstance(args[0], list):
             self.set_rotation(args[0])
+        elif isinstance(args[0], Rotation):
+            self = args[0]
+        else:
+            assert False, "Rotation construct failed "
 
     # def __init__(self, rot: list) -> None:
     #     self.set_rotation(rot)

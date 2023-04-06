@@ -35,8 +35,7 @@ class NuscGenerator():
                 for ann_tk in ann_tks]
         return anns
 
-    def compile_data(self, anns: list):
-
+    def compile_data(self, anns: list) -> Dataset:
         ret: Dataset = Dataset()
 
         for ann in anns:
@@ -55,5 +54,5 @@ class NuscGenerator():
                                ann['rotation'])
                      )
             )
-
-        return ret[20:]
+        print(ret[0].timestamp, ret[-1].timestamp, len(ret))
+        return ret

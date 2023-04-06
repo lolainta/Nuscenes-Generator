@@ -1,6 +1,7 @@
 import numpy as np
 from Dataset import Transform
-
+from Dataset import Dataset, Data
+from Rotation import Rotation
 show_animation = False
 
 
@@ -45,7 +46,9 @@ class QuinticPolynomial:
         return xt
 
 
-def quintic_polynomials_planner(src: Transform, sv, sa, dst: Transform, gv, ga, total_time, dt):
+def quintic_polynomials_planner(src: Transform, sv, sa, dst: Transform, gv, ga, frame, dt) -> Dataset:
+    ret = Dataset()
+
     sx = src.translation.x
     sy = src.translation.y
     syaw = src.rotation.yaw
@@ -64,37 +67,17 @@ def quintic_polynomials_planner(src: Transform, sv, sa, dst: Transform, gv, ga, 
     axg = ga * np.cos(gyaw)
     ayg = ga * np.sin(gyaw)
 
-    time, rx, ry, ryaw, rv, ra, rj = [], [], [], [], [], [], []
-
-    T = total_time
-    xqp = QuinticPolynomial(sx, vxs, axs, gx, vxg, axg, T)
-    yqp = QuinticPolynomial(sy, vys, ays, gy, vyg, ayg, T)
-
-    time, rx, ry, ryaw, rv, ra, rj = [], [], [], [], [], [], []
-
-    for t in np.arange(0.0, T + dt, dt):
-        time.append(t)
-        rx.append(xqp.calc_point(t))
-        ry.append(yqp.calc_point(t))
+    xqp = QuinticPolynomial(sx, vxs, axs, gx, vxg, axg, (frame-1)*dt)
+    yqp = QuinticPolynomial(sy, vys, ays, gy, vyg, ayg, (frame-1)*dt)
+    for f in range(frame):
+        t = f*dt
+        x = xqp.calc_point(t)
+        y = yqp.calc_point(t)
 
         vx = xqp.calc_first_derivative(t)
         vy = yqp.calc_first_derivative(t)
-        v = np.hypot(vx, vy)
         yaw = np.arctan2(vy, vx)
-        rv.append(v)
-        ryaw.append(yaw)
-
-        ax = xqp.calc_second_derivative(t)
-        ay = yqp.calc_second_derivative(t)
-        a = np.hypot(ax, ay)
-        if len(rv) >= 2 and rv[-1] - rv[-2] < 0.0:
-            a *= -1
-        ra.append(a)
-
-        jx = xqp.calc_third_derivative(t)
-        jy = yqp.calc_third_derivative(t)
-        j = np.hypot(jx, jy)
-        if len(ra) >= 2 and ra[-1] - ra[-2] < 0.0:
-            j *= -1
-
-    return time, rx, ry, ryaw, rv, ra, rj
+        cur = Data(t, None, None)
+        cur.set_atk(Transform([x, y, 0], float(yaw)))
+        ret.append(cur)
+    return ret
