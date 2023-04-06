@@ -1,0 +1,6 @@
+data/
+samples/
+.env/
+.vscode/
+*.py[cod]
+*.ipynb
