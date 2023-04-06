@@ -14,6 +14,11 @@ class Rotation():
         else:
             assert False, "Rotation construct failed "
 
+    def __sub__(self, o):
+        # print('rotation __sub__')
+        ret = self.yaw-o.yaw
+        # print('rotation __sub__ out')
+        return ret
     # def __init__(self, rot: list) -> None:
     #     self.set_rotation(rot)
 

@@ -2,19 +2,17 @@ from nuscenes.nuscenes import NuScenes
 from copy import deepcopy
 from quintic import quintic_polynomials_planner
 from Drawer import Drawer
+from Data import Data
+from Datalist import Datalist
 from Dataset import Dataset
-from NuscGenerator import NuscGenerator
+from NuscData import NuscData
 
 
 def main():
-
-    nusc = NuScenes(version='v1.0-mini', dataroot='./data', verbose=True)
-
-    gen = NuscGenerator(nusc, 5)
-
+    nusc = NuScenes(version='v1.0-mini', dataroot='./data', verbose=False)
+    gen: NuscData = NuscData(nusc, 5)
     scene = nusc.scene[5]
     samples = gen.get_samples(scene)
-
     # nusc.render_scene(scene['token'])
 
     ann_tk = samples[30]['anns'][7]
@@ -26,35 +24,29 @@ def main():
     print(f'{inst_tk=}')
     inst = nusc.get('instance', inst_tk)
     # print(inst)
-
     anns = gen.get_annotations(inst)
-    dataset: Dataset = gen.compile_data(anns)
+    ego_data: Datalist = gen.get_ego_data()
+    npc_data: Datalist = gen.get_npc_data(anns)
 
-    # print([d['time'] for d in data])
-    elapse_time = (dataset[-1].timestamp-dataset[0].timestamp)/1000000
-    print(f'{elapse_time=}s')
-    print('Data compiled successfully.')
+    dataset: Dataset = Dataset(ego_data)
+    dataset.set_npc(npc_data)
 
-    print('Drawing data')
     plt = Drawer()
-    # plt.plot_data(dataset)
-    print('Data drawn')
+    print('Drawing data')
+    plt.plot_dataset(dataset)
 
-    ego = dataset[-1].ego
-    atk = deepcopy(ego)
-    atk.flip()
-    atk.forward(2)
-    atk.rotate(20, org=ego.bound[0])
-    plt.plot_car(atk)
-
+    ego_final: Data = dataset.ego[-1]
+    atk_final: Data = deepcopy(ego_final)
+    atk_final.flip()
+    atk_final.forward(2)
+    atk_final.rotate(20, org=ego_final.bound[0])
+    # plt.show()
     res = quintic_polynomials_planner(
-        src=dataset[0].npc, sv=5, sa=0.1,
-        dst=atk, gv=10, ga=-1,
-        frame=len(dataset), dt=0.5)
-    # print(res)
-    dataset.set_atk(res)
-    plt.plot_data(dataset, atk=True)
+        src=dataset.npc,
+        dst=atk_final.transform, gv=10, ga=-1)
 
+    dataset.set_atk(res)
+    plt.plot_dataset(dataset, atk=True)
     plt.show()
 
 

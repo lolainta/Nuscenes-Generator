@@ -1,9 +1,11 @@
 from nuscenes.nuscenes import NuScenes
-from Dataset import Data, Dataset
+from Data import Data
+from Datalist import Datalist
+from Dataset import Dataset
 from Transform import Transform
 
 
-class NuscGenerator():
+class NuscData():
     def __init__(self, nusc: NuScenes, scene: int) -> None:
         self.nusc = nusc
         self.scene = self.nusc.scene[scene]
@@ -35,24 +37,36 @@ class NuscGenerator():
                 for ann_tk in ann_tks]
         return anns
 
-    def compile_data(self, anns: list) -> Dataset:
-        ret: Dataset = Dataset()
-
+    def get_npc_data(self, anns: list) -> Dataset:
+        ret: Datalist = Datalist()
         for ann in anns:
             sample_tk = ann['sample_token']
             sample = self.nusc.get('sample', sample_tk)
             data_tk = sample['data']['RADAR_FRONT']
             data = self.nusc.get('sample_data', data_tk)
-            ego_pos_tk = data['ego_pose_token']
-            ego_pos = self.nusc.get('ego_pose', ego_pos_tk)
+            # ego_pos_tk = data['ego_pose_token']
+            # ego_pos = self.nusc.get('ego_pose', ego_pos_tk)
 
             ret.append(
-                Data(ego_pos['timestamp'],
-                     Transform(ego_pos['translation'],
-                               ego_pos['rotation']),
+                Data(sample['timestamp'],
                      Transform(ann['translation'],
                                ann['rotation'])
                      )
             )
-        print(ret[0].timestamp, ret[-1].timestamp, len(ret))
+
+        ret.compile()
+        return ret
+
+    def get_ego_data(self):
+        ret: Datalist = Datalist()
+        for sample in self.samples:
+            data_tk = sample['data']['RADAR_FRONT']
+            data = self.nusc.get('sample_data', data_tk)
+            ego_pos_tk = data['ego_pose_token']
+            ego_pos = self.nusc.get('ego_pose', ego_pos_tk)
+
+            ret.append(Data(
+                sample['timestamp'],
+                Transform(ego_pos['translation'], ego_pos['rotation'])
+            ))
         return ret

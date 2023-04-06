@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from Dataset import Dataset
-from Transform import Transform
+from Datalist import Datalist
+from Data import Data
 from Translation import Translation
 
 
@@ -28,33 +29,28 @@ class Drawer():
         for i in range(4):
             self.plot_seg(bound[i], bound[(i+1) % 4], col=col)
 
-    def plot_car(self, d: Transform, col='green'):
-        x = d.translation.x
-        y = d.translation.y
-        yaw = d.rotation.yaw
+    def plot_car(self, d: Data, col='green'):
+        x = d.transform.translation.x
+        y = d.transform.translation.y
+        yaw = d.transform.rotation.yaw
         bnd = d.bound
         self.plot_box(bnd, col=col)
         self.plot_arrow(x, y, yaw, fc=col)
 
-    def plot_single_data(self, data: Transform):
-        # self.plot_car(data.translation.x)
-        pass
-
-    def plot_data(self, dataset: Dataset, atk=False):
-        for data in dataset:
+    def plot_dataset(self, dataset: Dataset, atk=False):
+        for v in dataset.time2data.values():
             plt.cla()
-            self.plot_car(dataset[0].ego, col='blue')
-            self.plot_car(data.ego, col='blue')
-            self.plot_car(dataset[-1].ego, col='blue')
-
-            self.plot_car(dataset[0].npc)
-            self.plot_car(data.npc)
-            self.plot_car(dataset[-1].npc)
+            self.plot_car(dataset.ego[0],  col='blue')
+            self.plot_car(dataset.ego[-1], col='blue')
+            self.plot_car(v['ego'], col='blue')
             if atk:
-                self.plot_car(dataset[0].atk)
-                self.plot_car(data.atk)
-                self.plot_car(dataset[-1].atk)
-
+                self.plot_car(dataset.atk[0])
+                self.plot_car(dataset.atk[-1])
+                self.plot_car(v['atk'])
+            else:
+                self.plot_car(dataset.npc[0])
+                self.plot_car(dataset.npc[-1])
+                self.plot_car(v['npc'])
             plt.pause(self.delay)
 
     def show(self):

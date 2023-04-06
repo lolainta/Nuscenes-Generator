@@ -1,7 +1,20 @@
+from numpy import sqrt
+
 
 class Translation():
-    def __init__(self, trans: list) -> None:
-        self.set_translation(trans)
+    def __init__(self, trans) -> None:
+        if isinstance(trans, list):
+            # print('list', trans)
+            self.set_translation(trans)
+        elif isinstance(trans, Translation):
+            # print('translation', trans)
+            # self = deepcopy(trans)
+            assert False
+        else:
+            assert False, "Translation construct failed "
+
+    def length(self) -> float:
+        return sqrt(self.x**2+self.y**2+self.z**2)
 
     def set_translation(self, trans: list) -> None:
         self.raw_trans = trans
@@ -18,8 +31,8 @@ class Translation():
         return Translation([self.x+o.x, self.y+o.y, self.z+o.z])
 
     def __sub__(self, o):
-        return Translation([self.x-o.x, self.y-o.y, self.z-o.z])
-
+        ret = Translation([self.x-o.x, self.y-o.y, self.z-o.z])
+        return ret
     # def __mul__(self, o):
     #     return Translation([self.x*o, self.y*o, self.z*o])
 

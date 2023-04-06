@@ -1,25 +1,24 @@
 import numpy as np
-from Dataset import Transform
-from Dataset import Dataset, Data
-from Rotation import Rotation
+from Transform import Transform
+from Datalist import Datalist
+from Data import Data
 show_animation = False
 
 
 class QuinticPolynomial:
 
     def __init__(self, xs, vxs, axs, xe, vxe, axe, time):
-        # calc coefficient of quintic polynomial
-        # See jupyter notebook document for derivation of this equation.
+
         self.a0 = xs
         self.a1 = vxs
-        self.a2 = axs / 2.0
+        self.a2 = axs
 
         A = np.array([[time ** 3, time ** 4, time ** 5],
                       [3 * time ** 2, 4 * time ** 3, 5 * time ** 4],
-                      [6 * time, 12 * time ** 2, 20 * time ** 3]])
+                      [6 * time, 12 * time ** 2, 20 * time ** 3]], dtype='float64')
         b = np.array([xe - self.a0 - self.a1 * time - self.a2 * time ** 2,
                       vxe - self.a1 - 2 * self.a2 * time,
-                      axe - 2 * self.a2])
+                      axe - 2 * self.a2], dtype='float64')
         x = np.linalg.solve(A, b)
 
         self.a3 = x[0]
@@ -46,38 +45,40 @@ class QuinticPolynomial:
         return xt
 
 
-def quintic_polynomials_planner(src: Transform, sv, sa, dst: Transform, gv, ga, frame, dt) -> Dataset:
-    ret = Dataset()
-
-    sx = src.translation.x
-    sy = src.translation.y
-    syaw = src.rotation.yaw
+def quintic_polynomials_planner(src: Datalist, dst: Transform, gv, ga) -> Datalist:
+    ret = Datalist()
+    sx = src[0].transform.translation.x
+    sy = src[0].transform.translation.y
+    syaw = src[0].transform.rotation.yaw
 
     gx = dst.translation.x
     gy = dst.translation.y
     gyaw = dst.rotation.yaw
 
+    sv = src[0].velocity
     vxs = sv * np.cos(syaw)
     vys = sv * np.sin(syaw)
     vxg = gv * np.cos(gyaw)
     vyg = gv * np.sin(gyaw)
 
+    sa = src[0].accelerate
     axs = sa * np.cos(syaw)
     ays = sa * np.sin(syaw)
     axg = ga * np.cos(gyaw)
     ayg = ga * np.sin(gyaw)
 
-    xqp = QuinticPolynomial(sx, vxs, axs, gx, vxg, axg, (frame-1)*dt)
-    yqp = QuinticPolynomial(sy, vys, ays, gy, vyg, ayg, (frame-1)*dt)
-    for f in range(frame):
-        t = f*dt
+    base_time = src[0].timestamp/1e6
+    total_time = src[-1].timestamp/1e6-base_time
+
+    xqp = QuinticPolynomial(sx, vxs, axs, gx, vxg, axg, total_time)
+    yqp = QuinticPolynomial(sy, vys, ays, gy, vyg, ayg, total_time)
+    for data in src.datalist:
+        t = data.timestamp/1e6-base_time
         x = xqp.calc_point(t)
         y = yqp.calc_point(t)
 
         vx = xqp.calc_first_derivative(t)
         vy = yqp.calc_first_derivative(t)
         yaw = np.arctan2(vy, vx)
-        cur = Data(t, None, None)
-        cur.set_atk(Transform([x, y, 0], float(yaw)))
-        ret.append(cur)
+        ret.append(Data(data.timestamp, Transform([x, y, 0], yaw)))
     return ret

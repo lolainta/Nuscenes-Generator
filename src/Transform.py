@@ -1,61 +1,50 @@
 from Rotation import Rotation
 from Translation import Translation
-from numpy import cos, sin, pi, deg2rad
+from numpy import cos, sin, deg2rad, pi, sqrt
 
 
 class Transform():
-    def __init__(self, translation: list, rotation) -> None:
-        self.translation = Translation(translation)
-        self.rotation = Rotation(rotation)
-        self.width = 2
-        self.length = 4
-        self.bound = self.get_bound()
+    def __init__(self, *args) -> None:
+        if len(args) == 1:
+            if isinstance(args[0], Transform):
+                self = args[0]
+            else:
+                assert False, "Transform construct failed "
+        elif len(args) == 2:
+            if isinstance(args[0], Translation):
+                self.translation = args[0]
+            else:
+                self.translation = Translation(args[0])
+            if isinstance(args[1], Rotation):
+                self.rotation = args[1]
+            else:
+                self.rotation = Rotation(args[1])
+        else:
+            assert False, "Transform construct failed "
 
-    def get_bound(self):
-        x = self.translation.x
-        y = self.translation.y
-        yaw = self.rotation.yaw
-        width = self.width
-        length = self.length
-        tr = Translation([x+length/2*cos(yaw)+width/2*cos(yaw-pi/2),
-                          y+length/2*sin(yaw)+width/2*sin(yaw-pi/2),
-                          0])
-        tl = Translation([x+length/2*cos(yaw)-width/2*cos(yaw-pi/2),
-                          y+length/2*sin(yaw)-width/2*sin(yaw-pi/2),
-                          0])
-        br = Translation([x-length/2*cos(yaw)+width/2*cos(yaw-pi/2),
-                          y-length/2*sin(yaw)+width/2*sin(yaw-pi/2),
-                          0])
-        bl = Translation([x-length/2*cos(yaw)-width/2*cos(yaw-pi/2),
-                          y-length/2*sin(yaw)-width/2*sin(yaw-pi/2),
-                          0])
-        return [tr, tl, bl, br]
+    def __sub__(self, o):
+        ret = Transform(self.translation-o.translation,
+                        self.rotation-o.rotation)
+        return ret
 
-    def flip(self) -> None:
-        width = self.width
-        length = self.length
-        yaw = self.rotation.yaw
-        self.translation.x += width*cos(yaw-pi/2)
-        self.translation.y += width*sin(yaw-pi/2)
-        self.bound = self.get_bound()
+    def __repr__(self):
+        return f'Transform:\n\t{self.translation}\n\t{self.rotation}'
 
-    def forward(self, dis: float) -> None:
-        yaw = self.rotation.yaw
-        self.translation.x += dis*cos(yaw)
-        self.translation.y += dis*sin(yaw)
-        self.bound = self.get_bound()
+    def length(self) -> float:
+        return self.translation.length()
+
+    def move(self, dis, relate_dir) -> None:
+        relate_dir += self.rotation.yaw
+        self.translation.x += dis*cos(relate_dir)
+        self.translation.y += dis*sin(relate_dir)
 
     def rotate(self, deg: float, org=None) -> None:
         org = self.translation if org is None else org
         rad = deg2rad(deg)
         self.rotation.yaw += rad
         self.translation = self._rotate_point(self.translation, org, rad)
-        self.bound = self.get_bound()
 
     def _rotate_point(self, p, org=(0, 0), rad=0):
         mat = [[cos(rad), cos(rad+pi/2)],
                [sin(rad),  sin(rad+pi/2)]]
         return (p-org).lmul22(mat) + org
-
-    def __repr__(self):
-        return f'Transform:\n\t{self.translation}\n\t{self.rotation}'
