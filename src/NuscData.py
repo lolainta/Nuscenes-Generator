@@ -9,10 +9,13 @@ class NuscData():
     def __init__(self, nusc: NuScenes, scene: int) -> None:
         self.nusc = nusc
         self.scene = self.nusc.scene[scene]
-        self.samples = self.get_samples()
-        self.instances = self.get_instances()
+        self.samples: list = self.get_samples()
+        self.instances: set = self.get_instances()
 
-    def get_samples(self):
+    def get(self, table: str, token: str) -> dict:
+        return self.nusc.get(table, token)
+
+    def get_samples(self) -> list:
         samples = [self.nusc.get('sample', self.scene['first_sample_token'])]
         while samples[-1]['next']:
             nxt = self.nusc.get('sample', samples[-1]['next'])
@@ -49,7 +52,7 @@ class NuscData():
                 for ann_tk in ann_tks]
         return anns
 
-    def get_npc_data(self, anns: list) -> Dataset:
+    def get_npc_data(self, anns: list) -> Datalist:
         ret: Datalist = Datalist()
         for ann in anns:
             sample_tk = ann['sample_token']
@@ -64,7 +67,7 @@ class NuscData():
         ret.compile()
         return ret
 
-    def get_ego_data(self):
+    def get_ego_data(self) -> Datalist:
         ret: Datalist = Datalist()
         for sample in self.samples:
             data_tk: str = sample['data']['RADAR_FRONT']
