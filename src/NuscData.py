@@ -1,7 +1,6 @@
 from nuscenes.nuscenes import NuScenes
 from Data import Data
 from Datalist import Datalist
-from Dataset import Dataset
 from Transform import Transform
 
 
@@ -36,6 +35,9 @@ class NuscData():
 
     def check(self, inst: dict) -> bool:
         if inst['first_annotation_token'] == inst['last_annotation_token']:
+            return False
+        cat = self.get('category', inst['category_token'])
+        if cat['name'] != 'vehicle.car':
             return False
         return True
 
