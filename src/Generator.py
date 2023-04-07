@@ -13,10 +13,11 @@ class Generator:
     def gen_by_inst(self, inst: dict) -> Dataset:
         anns = self.nuscData.get_annotations(inst)
 
+        dataset: Dataset = Dataset(self.nuscData.scene, inst)
         ego_data: Datalist = self.nuscData.get_ego_data()
         npc_data: Datalist = self.nuscData.get_npc_data(anns)
 
-        dataset: Dataset = Dataset(ego_data)
+        dataset.set_ego(ego_data)
         dataset.set_npc(npc_data)
 
         # plt = Drawer()

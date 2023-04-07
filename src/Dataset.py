@@ -5,10 +5,16 @@ from collections import defaultdict
 
 
 class Dataset():
-    def __init__(self, ego: Datalist) -> None:
-        self.ego: Datalist = ego
+    def __init__(self, scene: str, inst: str) -> None:
+        self.scene = scene
+        self.inst = inst
+        self.ego: Datalist = list()
         self.npc: Datalist = list()
         self.atk: Datalist = list()
+
+    def set_ego(self, ego: Datalist) -> None:
+        self.ego = ego
+        self.compile()
 
     def set_npc(self, npc: Datalist) -> None:
         self.npc = npc
@@ -19,7 +25,7 @@ class Dataset():
         self.compile()
 
     def compile(self) -> None:
-        self.get_timelist()
+        # self.get_timelist()
         self.gen_time2data()
         # print(self.time2data.keys())
 
