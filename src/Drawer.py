@@ -37,22 +37,23 @@ class Drawer():
         self.plot_box(bnd, col=col)
         self.plot_arrow(x, y, yaw, fc=col)
 
-    def plot_dataset(self, dataset: Dataset, atk=False) -> None:
-        print('Drawing data', file=stderr)
-        for v in dataset.time2data.values():
+    def plot_dataset(self, ds: Dataset, atk=False) -> None:
+        print(
+            f'Drawing datasetscene: {ds.scene["token"]} inst: {ds.inst["token"]}', file=stderr)
+        for v in ds.time2data.values():
             plt.cla()
             if 'ego' in v:
                 self.plot_car(v['ego'], col='blue')
-            self.plot_car(dataset.ego[0],  col='blue')
-            self.plot_car(dataset.ego[-1], col='blue')
+            self.plot_car(ds.ego[0],  col='blue')
+            self.plot_car(ds.ego[-1], col='blue')
             if atk:
-                self.plot_car(dataset.atk[0])
-                self.plot_car(dataset.atk[-1])
+                self.plot_car(ds.atk[0])
+                self.plot_car(ds.atk[-1])
                 if 'atk' in v:
                     self.plot_car(v['atk'])
             else:
-                self.plot_car(dataset.npc[0])
-                self.plot_car(dataset.npc[-1])
+                self.plot_car(ds.npc[0])
+                self.plot_car(ds.npc[-1])
                 if 'npc' in v:
                     self.plot_car(v['npc'])
             if self.delay:

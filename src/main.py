@@ -6,7 +6,7 @@ from NuscData import NuscData
 
 def main():
     nusc = NuScenes(version='v1.0-mini', dataroot='./data', verbose=False)
-    nuscData: NuscData = NuscData(nusc, 5)
+    nuscData: NuscData = NuscData(nusc, 1)
     gen: Generator = Generator(nuscData)
     plt: Drawer = Drawer()
     dataCluster = gen.gen_all()
