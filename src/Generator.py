@@ -10,6 +10,13 @@ class Generator:
     def __init__(self, nuscData: NuscData) -> None:
         self.nuscData = nuscData
 
+    def lc(self, d: Data) -> Data:
+        ret = deepcopy(d)
+        ret.flip()
+        ret.forward(ret.length/2)
+        ret.rotate(20, org=d.bound[0])
+        return ret
+
     def gen_by_inst(self, inst: dict) -> Dataset:
         anns = self.nuscData.get_annotations(inst)
 
@@ -20,14 +27,9 @@ class Generator:
         dataset.set_ego(ego_data)
         dataset.set_npc(npc_data)
 
-        # plt = Drawer()
-        # plt.plot_dataset(dataset)
         ego_final: Data = dataset.ego[-1]
-        atk_final: Data = deepcopy(ego_final)
-        atk_final.flip()
-        atk_final.forward(2)
-        atk_final.rotate(20, org=ego_final.bound[0])
-        # plt.show()
+        atk_final: Data = self.lc(ego_final)
+
         res = quintic_polynomials_planner(
             src=dataset.npc,
             dst=atk_final.transform,
