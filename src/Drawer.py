@@ -7,11 +7,11 @@ from Translation import Translation
 
 
 class Drawer():
-    def __init__(self) -> None:
+    def __init__(self, delay=0) -> None:
         # plt.gcf().canvas.mpl_connect('key_release_event',
         #                              lambda event: [exit(0) if event.key == 'escape' else None])
         self.fig, self.ax = plt.subplots(figsize=(20, 20))
-        self.delay = 1e-12
+        self.delay = delay
         self.ax.set_xticks(range(1720, 1723), fontsize=20)
         self.ax.set_yticks(range(2668, 2672), fontsize=20)
 
@@ -38,6 +38,7 @@ class Drawer():
         self.plot_arrow(x, y, yaw, fc=col)
 
     def plot_dataset(self, dataset: Dataset, atk=False):
+        print('Drawing data')
         for v in dataset.time2data.values():
             plt.cla()
             if 'ego' in v:

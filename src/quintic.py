@@ -11,7 +11,7 @@ class QuinticPolynomial:
 
         self.a0 = xs
         self.a1 = vxs
-        self.a2 = axs
+        self.a2 = axs / 2.0
 
         A = np.array([[time ** 3, time ** 4, time ** 5],
                       [3 * time ** 2, 4 * time ** 3, 5 * time ** 4],

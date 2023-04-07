@@ -21,7 +21,7 @@ class Dataset():
     def compile(self) -> None:
         self.get_timelist()
         self.gen_time2data()
-        print(self.time2data.keys())
+        # print(self.time2data.keys())
 
     def gen_time2data(self) -> None:
         ret = defaultdict(dict)

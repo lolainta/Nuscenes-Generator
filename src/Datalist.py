@@ -27,7 +27,6 @@ class Datalist():
             sub: Data = self.datalist[i+1]-self.datalist[i]
             dis = sub.transform.length()
             dxdt.append(dis/sub.timestamp*1e6)
-
         self.datalist[0].set_velocity(dxdt[0])
         self.datalist[-1].set_velocity(dxdt[-1])
         for i in range(1, len(self.datalist)-1):
