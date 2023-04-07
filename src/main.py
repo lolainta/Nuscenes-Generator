@@ -23,7 +23,9 @@ def main():
     inst_tk = ann['instance_token']
     print(f'{inst_tk=}')
     inst = nusc.get('instance', inst_tk)
-    # print(inst)
+    print(inst)
+    cat = nusc.get('category', inst['category_token'])
+    print(cat)
     anns = gen.get_annotations(inst)
     ego_data: Datalist = gen.get_ego_data()
     npc_data: Datalist = gen.get_npc_data(anns)
@@ -34,7 +36,6 @@ def main():
     plt = Drawer()
     print('Drawing data')
     plt.plot_dataset(dataset)
-
     ego_final: Data = dataset.ego[-1]
     atk_final: Data = deepcopy(ego_final)
     atk_final.flip()
@@ -43,7 +44,7 @@ def main():
     # plt.show()
     res = quintic_polynomials_planner(
         src=dataset.npc,
-        dst=atk_final.transform, gv=10, ga=-1)
+        dst=atk_final.transform, gv=dataset.npc[-1].velocity, ga=dataset.npc[-1].accelerate)
 
     dataset.set_atk(res)
     plt.plot_dataset(dataset, atk=True)

@@ -11,7 +11,7 @@ class Drawer():
         # plt.gcf().canvas.mpl_connect('key_release_event',
         #                              lambda event: [exit(0) if event.key == 'escape' else None])
         self.fig, self.ax = plt.subplots(figsize=(20, 20))
-        self.delay = 0.01
+        self.delay = 1e-12
         self.ax.set_xticks(range(1720, 1723), fontsize=20)
         self.ax.set_yticks(range(2668, 2672), fontsize=20)
 
@@ -40,17 +40,20 @@ class Drawer():
     def plot_dataset(self, dataset: Dataset, atk=False):
         for v in dataset.time2data.values():
             plt.cla()
+            if 'ego' in v:
+                self.plot_car(v['ego'], col='blue')
             self.plot_car(dataset.ego[0],  col='blue')
             self.plot_car(dataset.ego[-1], col='blue')
-            self.plot_car(v['ego'], col='blue')
             if atk:
                 self.plot_car(dataset.atk[0])
                 self.plot_car(dataset.atk[-1])
-                self.plot_car(v['atk'])
+                if 'atk' in v:
+                    self.plot_car(v['atk'])
             else:
                 self.plot_car(dataset.npc[0])
                 self.plot_car(dataset.npc[-1])
-                self.plot_car(v['npc'])
+                if 'npc' in v:
+                    self.plot_car(v['npc'])
             plt.pause(self.delay)
 
     def show(self):
