@@ -31,10 +31,13 @@ class Generator:
         atk_final: Data = self.lc(ego_final)
 
         res = quintic_polynomials_planner(
-            src=dataset.npc,
+            src=dataset.npc[0].transform,
+            sv=dataset.npc[0].velocity,
+            sa=dataset.npc[-1].accelerate,
             dst=atk_final.transform,
             gv=dataset.npc[-1].velocity,
-            ga=dataset.npc[-1].accelerate
+            ga=dataset.npc[-1].accelerate,
+            timelist=dataset.timelist
         )
 
         dataset.set_atk(res)

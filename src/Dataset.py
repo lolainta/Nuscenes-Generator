@@ -25,7 +25,7 @@ class Dataset():
         self.compile()
 
     def compile(self) -> None:
-        # self.get_timelist()
+        self.get_timelist()
         self.gen_time2data()
         # print(self.time2data.keys())
 

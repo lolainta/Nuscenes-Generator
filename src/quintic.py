@@ -45,40 +45,39 @@ class QuinticPolynomial:
         return xt
 
 
-def quintic_polynomials_planner(src: Datalist, dst: Transform, gv, ga) -> Datalist:
+def quintic_polynomials_planner(src: Datalist, sv, sa, dst: Transform, gv, ga, timelist: list) -> Datalist:
     ret = Datalist()
-    sx = src[0].transform.translation.x
-    sy = src[0].transform.translation.y
-    syaw = src[0].transform.rotation.yaw
+    sx = src.translation.x
+    sy = src.translation.y
+    syaw = src.rotation.yaw
 
     gx = dst.translation.x
     gy = dst.translation.y
     gyaw = dst.rotation.yaw
 
-    sv = src[0].velocity
     vxs = sv * np.cos(syaw)
     vys = sv * np.sin(syaw)
     vxg = gv * np.cos(gyaw)
     vyg = gv * np.sin(gyaw)
 
-    sa = src[0].accelerate
     axs = sa * np.cos(syaw)
     ays = sa * np.sin(syaw)
     axg = ga * np.cos(gyaw)
     ayg = ga * np.sin(gyaw)
 
-    base_time = src[0].timestamp/1e6
-    total_time = src[-1].timestamp/1e6-base_time
+    base_time = timelist[0]/1e6
+    final_time = timelist[-1]/1e6
+    total_time = final_time-base_time
 
     xqp = QuinticPolynomial(sx, vxs, axs, gx, vxg, axg, total_time)
     yqp = QuinticPolynomial(sy, vys, ays, gy, vyg, ayg, total_time)
-    for data in src.datalist:
-        t = data.timestamp/1e6-base_time
+    for time in timelist:
+        t = time/1e6-base_time
         x = xqp.calc_point(t)
         y = yqp.calc_point(t)
 
         vx = xqp.calc_first_derivative(t)
         vy = yqp.calc_first_derivative(t)
         yaw = np.arctan2(vy, vx)
-        ret.append(Data(data.timestamp, Transform([x, y, 0], yaw)))
+        ret.append(Data(time, Transform([x, y, 0], yaw)))
     return ret
