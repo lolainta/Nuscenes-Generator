@@ -39,7 +39,7 @@ class Drawer():
 
     def plot_dataset(self, ds: Dataset, atk=False) -> None:
         print(
-            f'Drawing datasetscene: {ds.scene["token"]} inst: {ds.inst["token"]}', file=stderr)
+            f'Drawing dataset: scene={ds.scene["token"]} inst={ds.inst["token"]}', file=stderr)
         for v in ds.time2data.values():
             plt.cla()
             if 'ego' in v:

@@ -15,7 +15,7 @@ def main():
         scene_dir = os.path.join('./records/', dataCluster[0].scene['token'])
         os.makedirs(scene_dir, exist_ok=True)
         for dataset in dataCluster:
-            with open(os.path.join(scene_dir, dataset.inst['token']), 'wb') as f:
+            with open(os.path.join(scene_dir, f'{dataset.inst["token"]}.pikle'), 'wb') as f:
                 pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
