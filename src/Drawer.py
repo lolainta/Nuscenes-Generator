@@ -61,3 +61,6 @@ class Drawer():
 
     def show(self) -> None:
         plt.show()
+
+    def close(self) -> None:
+        plt.close()

@@ -22,6 +22,7 @@ def show(file):
     plt = Drawer()
     plt.plot_dataset(dataset)
     plt.plot_dataset(dataset, atk=True)
+    plt.close()
 
 
 def main():
