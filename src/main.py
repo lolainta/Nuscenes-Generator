@@ -1,7 +1,8 @@
 from nuscenes.nuscenes import NuScenes
-from Drawer import Drawer
 from Generator import Generator
 from NuscData import NuscData
+import pickle
+import os
 
 
 def main():
@@ -11,10 +12,11 @@ def main():
         gen: Generator = Generator(nuscData)
         dataCluster = gen.gen_all()
         print(f'{len(dataCluster)} of data generated in scene[{i}]')
+        scene_dir = os.path.join('./records/', dataCluster[0].scene['token'])
+        os.makedirs(scene_dir, exist_ok=True)
         for dataset in dataCluster:
-            plt: Drawer = Drawer()
-            plt.plot_dataset(dataset)
-            plt.plot_dataset(dataset, atk=True)
+            with open(os.path.join(scene_dir, dataset.inst['token']), 'wb') as f:
+                pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == '__main__':

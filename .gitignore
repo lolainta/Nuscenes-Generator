@@ -1,5 +1,6 @@
 data/
 samples/
+records/
 .env/
 .vscode/
 *.py[cod]
