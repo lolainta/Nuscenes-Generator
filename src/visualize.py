@@ -2,26 +2,45 @@ import pickle
 import sys
 import os
 import random
+import argparse
 from Drawer import Drawer
 
 
-def main():
-    if len(sys.argv) == 1:
-        print(f'Usage: python3 {sys.argv[0]} <picklefile>')
-        print(f'No argument given, randomly pick one from ./records')
-        scenes = os.listdir('./records')
-        scene = random.sample(scenes, 1)[0]
-        insts = os.listdir(os.path.join('./records', scene))
-        inst = random.sample(insts, 1)[0]
-        record = os.path.join('./records', scene, inst)
-    else:
-        record = sys.argv[1]
-    print(f'Loading file: {record}')
-    with open(record, 'rb') as f:
+def gen_random() -> str:
+    scenes = os.listdir('./records')
+    scene = random.sample(scenes, 1)[0]
+    insts = os.listdir(os.path.join('./records', scene))
+    inst = random.sample(insts, 1)[0]
+    record = os.path.join('./records', scene, inst)
+    return record
+
+
+def show(file):
+    print(f'Loading file: {file}')
+    with open(file, 'rb') as f:
         dataset = pickle.load(f)
     plt = Drawer()
     plt.plot_dataset(dataset)
     plt.plot_dataset(dataset, atk=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog='python3 src/visualize.py',
+        description='Visualize generated dataset from given pickle file',
+    )
+    parser.add_argument('-f', '--file',
+                        default=gen_random(),
+                        help='Dataset folder',
+                        )
+    parser.add_argument('--one', action='store_true')
+    args = parser.parse_args()
+    print(args)
+    if args.one:
+        show(args.file)
+    else:
+        while True:
+            show(gen_random())
 
 
 if __name__ == '__main__':

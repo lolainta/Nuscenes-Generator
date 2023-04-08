@@ -48,7 +48,6 @@ def main():
                         help='Nuscene dataset version')
     parser.add_argument('--record',
                         action='store_true',
-                        default=False,
                         help='Whether to record to record path or not)')
     parser.add_argument('--record-path',
                         default='./records',
@@ -56,7 +55,6 @@ def main():
                         )
     parser.add_argument('-v', '--verbose',
                         action='store_true',
-                        default=False,
                         help='Show log'
                         )
     args = parser.parse_args()
