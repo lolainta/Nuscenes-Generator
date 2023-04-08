@@ -4,22 +4,27 @@ from NuscData import NuscData
 import pickle
 import os
 import argparse
+from tqdm import trange, tqdm
 
 
 def run(args):
-    nusc = NuScenes(version=args.dataset, dataroot='./data', verbose=True)
+    nusc = NuScenes(version=args.dataset,
+                    dataroot='./data',
+                    verbose=args.verbose)
     cnt = 0
+    print = tqdm.write
     print("Generating data...")
-    for i in range(len(nusc.scene)):
-        # print(f'Generate data for scene {nusc.scene[i]["token"]}')
+    for i in trange(len(nusc.scene)):
         nuscData: NuscData = NuscData(nusc, i)
         gen: Generator = Generator(nuscData)
         dataCluster = gen.gen_all()
         sz = len(dataCluster)
         cnt += sz
-        print(f'{sz} data generated in scene[{i}]')
+        if args.verbose:
+            print(f'{sz} data generated in scene[{i}]')
         if sz == 0:
-            print(f"No data generated for this scene, skip")
+            if args.verbose:
+                print(f"No data generated for scene[{i}], skip")
             continue
         if args.record:
             scene_dir = os.path.join(
@@ -48,6 +53,11 @@ def main():
     parser.add_argument('--record-path',
                         default='./records',
                         help='The path to store the generated data (create if not exists)'
+                        )
+    parser.add_argument('-v', '--verbose',
+                        action='store_true',
+                        default=False,
+                        help='Show log'
                         )
     args = parser.parse_args()
     run(args)
