@@ -1,10 +1,9 @@
-
 from Data import Data
 from Datalist import Datalist
 from collections import defaultdict
 
 
-class Dataset():
+class Dataset:
     def __init__(self, scene: str, inst: str) -> None:
         self.scene = scene
         self.inst = inst
@@ -32,11 +31,11 @@ class Dataset():
     def gen_time2data(self) -> None:
         ret = defaultdict(dict)
         for d in self.ego:
-            ret[d.timestamp]['ego'] = d
+            ret[d.timestamp]["ego"] = d
         for d in self.npc:
-            ret[d.timestamp]['npc'] = d
+            ret[d.timestamp]["npc"] = d
         for d in self.atk:
-            ret[d.timestamp]['atk'] = d
+            ret[d.timestamp]["atk"] = d
         self.time2data: dict[int, dict[str, Data]] = ret
 
     def get_timelist(self) -> None:

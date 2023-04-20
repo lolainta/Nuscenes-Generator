@@ -6,8 +6,7 @@ from NuscData import NuscGenerator
 
 
 def main():
-
-    nusc = NuScenes(version='v1.0-mini', dataroot='./data', verbose=True)
+    nusc = NuScenes(version="v1.0-mini", dataroot="./data", verbose=True)
 
     gen = NuscGenerator(nusc, 5)
 
@@ -69,5 +68,5 @@ def main():
     # # plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -2,7 +2,7 @@ from pyquaternion import Quaternion
 from numpy import arctan2
 
 
-class Rotation():
+class Rotation:
     def __init__(self, *args) -> None:
         assert len(args) == 1, "Rotation constructor failed"
         if isinstance(args[0], float):
@@ -16,9 +16,10 @@ class Rotation():
 
     def __sub__(self, o):
         # print('rotation __sub__')
-        ret = self.yaw-o.yaw
+        ret = self.yaw - o.yaw
         # print('rotation __sub__ out')
         return ret
+
     # def __init__(self, rot: list) -> None:
     #     self.set_rotation(rot)
 
@@ -29,4 +30,4 @@ class Rotation():
         self.yaw = rot
 
     def __repr__(self):
-        return f'Rotation: yaw={self.yaw}'
+        return f"Rotation: yaw={self.yaw}"

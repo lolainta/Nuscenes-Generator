@@ -13,7 +13,7 @@ class Generator:
     def lc(self, d: Data) -> Data:
         ret = deepcopy(d)
         ret.flip()
-        ret.forward(ret.length/2)
+        ret.forward(ret.length / 2)
         ret.rotate(20, org=d.bound[0])
         return ret
 
@@ -37,7 +37,7 @@ class Generator:
             dst=atk_final.transform,
             gv=dataset.npc[-1].velocity,
             ga=dataset.npc[-1].accelerate,
-            timelist=dataset.timelist
+            timelist=dataset.timelist,
         )
 
         dataset.set_atk(res)
@@ -48,8 +48,10 @@ class Generator:
         ret = list()
         inst_tks: set = self.nuscData.instances
         for inst_tk in inst_tks:
-            inst = self.nuscData.get('instance', inst_tk)
+            inst = self.nuscData.get("instance", inst_tk)
             ds = self.gen_by_inst(inst)
-            if ds.filter():
-                ret.append(ds)
+            ret.append(ds)
         return ret
+
+    def filter(self, dataCluster: list) -> list:
+        return [ds for ds in dataCluster if ds.filter()]

@@ -2,7 +2,7 @@ from Translation import Translation
 from numpy import cos, sin, pi
 
 
-class Data():
+class Data:
     def __init__(self, ts, trans) -> None:
         self.timestamp = ts
         self.transform = trans
@@ -13,7 +13,7 @@ class Data():
     def __sub__(self, o):
         # print(f'data  __sub__')
         # print(tf)
-        ret = Data(self.timestamp-o.timestamp, self.transform-o.transform)
+        ret = Data(self.timestamp - o.timestamp, self.transform - o.transform)
         # print('data __sub done')
         return ret
 
@@ -29,22 +29,38 @@ class Data():
         yaw = self.transform.rotation.yaw
         width = self.width
         length = self.length
-        tr = Translation([x+length/2*cos(yaw)+width/2*cos(yaw-pi/2),
-                          y+length/2*sin(yaw)+width/2*sin(yaw-pi/2),
-                          0])
-        tl = Translation([x+length/2*cos(yaw)-width/2*cos(yaw-pi/2),
-                          y+length/2*sin(yaw)-width/2*sin(yaw-pi/2),
-                          0])
-        br = Translation([x-length/2*cos(yaw)+width/2*cos(yaw-pi/2),
-                          y-length/2*sin(yaw)+width/2*sin(yaw-pi/2),
-                          0])
-        bl = Translation([x-length/2*cos(yaw)-width/2*cos(yaw-pi/2),
-                          y-length/2*sin(yaw)-width/2*sin(yaw-pi/2),
-                          0])
+        tr = Translation(
+            [
+                x + length / 2 * cos(yaw) + width / 2 * cos(yaw - pi / 2),
+                y + length / 2 * sin(yaw) + width / 2 * sin(yaw - pi / 2),
+                0,
+            ]
+        )
+        tl = Translation(
+            [
+                x + length / 2 * cos(yaw) - width / 2 * cos(yaw - pi / 2),
+                y + length / 2 * sin(yaw) - width / 2 * sin(yaw - pi / 2),
+                0,
+            ]
+        )
+        br = Translation(
+            [
+                x - length / 2 * cos(yaw) + width / 2 * cos(yaw - pi / 2),
+                y - length / 2 * sin(yaw) + width / 2 * sin(yaw - pi / 2),
+                0,
+            ]
+        )
+        bl = Translation(
+            [
+                x - length / 2 * cos(yaw) - width / 2 * cos(yaw - pi / 2),
+                y - length / 2 * sin(yaw) - width / 2 * sin(yaw - pi / 2),
+                0,
+            ]
+        )
         return [tr, tl, bl, br]
 
     def flip(self, side=0) -> None:
-        self.transform.move(self.width, -pi/2)
+        self.transform.move(self.width, -pi / 2)
         self.bound = self.get_bound()
 
     def forward(self, dis: float) -> None:
