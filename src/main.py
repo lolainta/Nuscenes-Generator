@@ -1,10 +1,10 @@
+import argparse
+import os
+import pickle
+from tqdm import trange, tqdm
 from nuscenes.nuscenes import NuScenes
 from Generator import Generator
 from NuscData import NuscData
-import pickle
-import os
-import argparse
-from tqdm import trange, tqdm
 
 
 def run(args):

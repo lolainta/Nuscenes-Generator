@@ -13,15 +13,15 @@ class Dataset():
         self.atk: Datalist = list()
 
     def set_ego(self, ego: Datalist) -> None:
-        self.ego = ego
+        self.ego: Datalist = ego
         self.compile()
 
     def set_npc(self, npc: Datalist) -> None:
-        self.npc = npc
+        self.npc: Datalist = npc
         self.compile()
 
     def set_atk(self, atk: Datalist) -> None:
-        self.atk = atk
+        self.atk: Datalist = atk
         self.compile()
 
     def compile(self) -> None:
@@ -48,3 +48,12 @@ class Dataset():
         ret = list(ret)
         ret = sorted(ret)
         self.timelist = ret
+
+    def filter(self) -> bool:
+        self.atk.compile()
+        maxv = max([t.velocity for t in self.atk])
+        maxa = max([t.accelerate for t in self.atk])
+        if maxv < 25 and maxa < 10:
+            return True
+        # print('filtered', self.scene['token'], self.inst['token'], maxv, maxa)
+        return False

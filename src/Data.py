@@ -1,4 +1,3 @@
-from Transform import Transform
 from Translation import Translation
 from numpy import cos, sin, pi
 

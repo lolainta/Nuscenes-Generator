@@ -1,7 +1,7 @@
-import pickle
-import os
-import random
 import argparse
+import os
+import pickle
+import random
 from Drawer import Drawer
 
 

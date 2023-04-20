@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sys import stderr
-from Dataset import Dataset
+import sys
 from Data import Data
+from Dataset import Dataset
 from Translation import Translation
 
 
@@ -39,7 +39,7 @@ class Drawer():
 
     def plot_dataset(self, ds: Dataset, atk=False) -> None:
         print(
-            f'Drawing dataset: scene={ds.scene["token"]} inst={ds.inst["token"]}', file=stderr)
+            f'Drawing dataset: scene={ds.scene["token"]} inst={ds.inst["token"]}', file=sys.stderr)
         for v in ds.time2data.values():
             plt.cla()
             if 'ego' in v:

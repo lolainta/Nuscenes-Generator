@@ -1,6 +1,4 @@
 from Data import Data
-from Transform import Transform
-import numpy as np
 
 
 class Datalist():

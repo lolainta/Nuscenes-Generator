@@ -1,8 +1,7 @@
 import numpy as np
-from Transform import Transform
-from Datalist import Datalist
 from Data import Data
-show_animation = False
+from Datalist import Datalist
+from Transform import Transform
 
 
 class QuinticPolynomial:

@@ -1,8 +1,8 @@
+from copy import deepcopy
 from NuscData import NuscData
 from Dataset import Dataset
 from Datalist import Datalist
 from Data import Data
-from copy import deepcopy
 from quintic import quintic_polynomials_planner
 
 
@@ -49,5 +49,7 @@ class Generator:
         inst_tks: set = self.nuscData.instances
         for inst_tk in inst_tks:
             inst = self.nuscData.get('instance', inst_tk)
-            ret.append(self.gen_by_inst(inst))
+            ds = self.gen_by_inst(inst)
+            if ds.filter():
+                ret.append(ds)
         return ret
